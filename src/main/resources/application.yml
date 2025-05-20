@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: brich
+  profiles:
+    active: default
+  datasource:
+    url: jdbc:mysql://116.205.244.106:3306/stock?useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 202358hjq
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.example.stock.model
