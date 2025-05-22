@@ -21,9 +21,11 @@ public class StockController {
     @GetMapping("/changes")
     public List<AggregatedChange> changes(
             @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
-            @RequestParam("end")   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end
+            @RequestParam("end")   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
+            @RequestParam(value = "changeType", required = false) String changeType,
+            @RequestParam(value = "changeSort", required = false) String changeSort
     ) {
-        return service.getAggregatedChanges(start, end);
+        return service.getAggregatedChanges(start, end, changeType, changeSort);
     }
 
     @GetMapping("/{code}/chart")

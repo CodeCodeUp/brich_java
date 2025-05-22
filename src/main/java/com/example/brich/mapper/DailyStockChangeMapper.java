@@ -12,7 +12,8 @@ import java.util.List;
 public interface DailyStockChangeMapper {
     List<AggregatedChangeDto> findAggregatedChangesByDay(
             @Param("start") LocalDate start,
-            @Param("end") LocalDate end
+            @Param("end") LocalDate end,
+            @Param("changeType") String changeType
     );
 
     List<PricePointDto> findPricePoints(
