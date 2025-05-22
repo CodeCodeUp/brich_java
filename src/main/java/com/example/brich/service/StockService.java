@@ -63,27 +63,83 @@ public class StockService {
 
             result.add(dto);
         }
+        // 将相同code的进行合并，日期选最早一天，totalIncrease和totalDecrease各自相加
+        Map<String, List<AggregatedChange>> codeGrouped = result.stream()
+                .collect(Collectors.groupingBy(AggregatedChange::getStockCode));
+
+        List<AggregatedChange> mergedResult = new ArrayList<>();
+        for (Map.Entry<String, List<AggregatedChange>> entry : codeGrouped.entrySet()) {
+            List<AggregatedChange> sameCodeRecords = entry.getValue();
+
+            // 只有一条记录不需要合并
+            if (sameCodeRecords.size() == 1) {
+                mergedResult.add(sameCodeRecords.get(0));
+                continue;
+            }
+
+            // 合并同一股票代码的记录
+            AggregatedChange merged = new AggregatedChange();
+            String stockCode = entry.getKey();
+            merged.setStockCode(stockCode);
+            merged.setStockName(sameCodeRecords.get(0).getStockName());
+
+            // 找最早的交易日期
+            LocalDate earliestDate = sameCodeRecords.stream()
+                    .map(AggregatedChange::getTradeDate)
+                    .min(LocalDate::compareTo)
+                    .orElse(null);
+            merged.setTradeDate(earliestDate);
+
+            // 汇总增持和减持金额
+            BigDecimal totalIncrease = sameCodeRecords.stream()
+                    .map(AggregatedChange::getTotalIncrease)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            BigDecimal totalDecrease = sameCodeRecords.stream()
+                    .map(AggregatedChange::getTotalDecrease)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            merged.setTotalIncrease(totalIncrease);
+            merged.setTotalDecrease(totalDecrease);
+
+            // 合并人员名称和职位
+            Set<String> names = new LinkedHashSet<>();
+            Set<String> positions = new LinkedHashSet<>();
+            Set<String> types = new LinkedHashSet<>();
+
+            for (AggregatedChange record : sameCodeRecords) {
+                if (record.getChangerName() != null) {
+                    names.addAll(Arrays.asList(record.getChangerName().split(",")));
+                }
+                if (record.getChangerPosition() != null) {
+                    positions.addAll(Arrays.asList(record.getChangerPosition().split(",")));
+                }
+
+            }
+            merged.setChangerName(String.join(",", names));
+            merged.setChangerPosition(String.join(",", positions));
+
+            mergedResult.add(merged);
+        }
 
         // 3. 根据排序参数决定排序方式
         if (changeSort != null && !changeSort.isEmpty()) {
-            // 按总变动金额(增持+减持)排序
+
             Comparator<AggregatedChange> comparator = Comparator.comparing(
                 item -> item.getTotalIncrease().add(item.getTotalDecrease())
             );
-            
+
             if ("desc".equalsIgnoreCase(changeSort)) {
                 // 降序排序
-                result.sort(comparator.reversed());
+                mergedResult.sort(comparator.reversed());
             } else if ("asc".equalsIgnoreCase(changeSort)) {
                 // 升序排序
-                result.sort(comparator);
+                mergedResult.sort(comparator);
             }
         } else {
             // 默认按日期倒序排序
-            result.sort(Comparator.comparing(AggregatedChange::getTradeDate).reversed());
+            mergedResult.sort(Comparator.comparing(AggregatedChange::getTradeDate).reversed());
         }
         
-        return result;
+        return mergedResult;
     }
 
     public List<PricePointDto> getPricePoints(String code) {
