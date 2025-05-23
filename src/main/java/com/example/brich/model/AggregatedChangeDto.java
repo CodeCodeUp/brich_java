@@ -11,6 +11,7 @@ public class AggregatedChangeDto {
     private String stockName;
     private String changeType;
     private BigDecimal totalPrice;
+    private String price;
     private String changerName;
     private String changerPosition;
 }

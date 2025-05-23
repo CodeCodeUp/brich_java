@@ -35,6 +35,7 @@
         trade_date      AS tradeDate,
         change_type      AS changeType,
         total_price      AS totalPrice,
+        price             AS price,
         changer_name      AS changerName,
         changer_position AS changerPosition
         FROM daily_stock_change
