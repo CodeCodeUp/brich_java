@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,9 +24,10 @@ public class StockController {
             @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @RequestParam("end")   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
             @RequestParam(value = "changeType", required = false) String changeType,
-            @RequestParam(value = "changeSort", required = false) String changeSort
+            @RequestParam(value = "changeSort", required = false) String changeSort,
+            @RequestParam(value = "totalPrice", required = false) BigDecimal totalPrice
     ) {
-        return service.getAggregatedChanges(start, end, changeType, changeSort);
+        return service.getAggregatedChanges(start, end, changeType, changeSort, totalPrice);
     }
 
     @GetMapping("/{code}/chart")

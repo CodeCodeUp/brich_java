@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat;
 @RequestMapping("/data/api")
 public class DataApiController {
 
-    private final static String URL = "116.205.244.106:5000";
+    private final static String URL = "127.0.0.1:5000";
     private final static String ALL = "/stock_hold_management";
     private final static String DETAIL = "/stock_hist_day";
 

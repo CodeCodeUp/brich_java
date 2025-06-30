@@ -17,6 +17,9 @@
         <if test="changeType != null">
             AND change_type = #{changeType}
         </if>
+        <if test="totalPrice != null">
+            AND ABS(total_price) >= #{totalPrice}
+        </if>
         AND trade_date BETWEEN #{start} AND #{end}
         ORDER BY trade_date DESC
     </select>

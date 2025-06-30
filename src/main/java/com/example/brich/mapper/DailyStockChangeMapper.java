@@ -5,6 +5,7 @@ import com.example.brich.model.AggregatedChangeDto;
 import com.example.brich.model.PricePointDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -13,7 +14,8 @@ public interface DailyStockChangeMapper {
     List<AggregatedChangeDto> findAggregatedChangesByDay(
             @Param("start") LocalDate start,
             @Param("end") LocalDate end,
-            @Param("changeType") String changeType
+            @Param("changeType") String changeType,
+            @Param("totalPrice") BigDecimal totalPrice
     );
 
     List<PricePointDto> findPricePoints(

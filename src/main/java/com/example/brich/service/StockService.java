@@ -18,8 +18,8 @@ public class StockService {
     @Autowired
     private DailyStockChangeMapper mapper;
 
-    public List<AggregatedChange> getAggregatedChanges(LocalDate start, LocalDate end, String changeType, String changeSort) {
-        List<AggregatedChangeDto> rawList = mapper.findAggregatedChangesByDay(start, end, changeType);
+    public List<AggregatedChange> getAggregatedChanges(LocalDate start, LocalDate end, String changeType, String changeSort, BigDecimal totalPrice) {
+        List<AggregatedChangeDto> rawList = mapper.findAggregatedChangesByDay(start, end, changeType, totalPrice);
         // 1. 按 (tradeDate, stockCode, stockName) 分组
         Map<List<Object>, List<AggregatedChangeDto>> grouped = rawList.stream()
                 .collect(Collectors.groupingBy(item ->
@@ -138,7 +138,7 @@ public class StockService {
             // 默认按日期倒序排序
             mergedResult.sort(Comparator.comparing(AggregatedChange::getTradeDate).reversed());
         }
-        
+
         return mergedResult;
     }
 
